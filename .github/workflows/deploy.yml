@@ -1,0 +1,123 @@
+name: Deploy Pokemon TCG Analyst to AWS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend (SAM)
+    runs-on: ubuntu-latest
+    outputs:
+      api-url: ${{ steps.deploy.outputs.api-url }}
+      bucket-name: ${{ steps.deploy.outputs.bucket-name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt -t .
+          cd ..
+
+      - name: Build SAM application
+        run: sam build
+
+      - name: Deploy SAM application
+        id: deploy
+        run: |
+          sam deploy \
+            --stack-name pokemon-tcg-analyst \
+            --capabilities CAPABILITY_IAM \
+            --region ${{ env.AWS_REGION }} \
+            --no-fail-on-empty-changeset \
+            --resolve-s3 \
+            --parameter-overrides \
+              PokemonTCGApiKey=${{ secrets.POKEMON_TCG_API_KEY }}
+
+          # Get outputs
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name pokemon-tcg-analyst \
+            --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
+            --output text)
+
+          BUCKET_NAME="pokemon-tcg-analyst-$(aws sts get-caller-identity --query Account --output text)"
+
+          echo "api-url=$API_URL" >> $GITHUB_OUTPUT
+          echo "bucket-name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+
+          echo "✅ Backend deployed successfully!"
+          echo "API URL: $API_URL"
+
+  deploy-frontend:
+    name: Deploy Frontend (S3)
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        env:
+          REACT_APP_API_URL: ${{ needs.deploy-backend.outputs.api-url }}
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync frontend/build/ s3://${{ needs.deploy-backend.outputs.bucket-name }}/ --delete
+          echo "✅ Frontend deployed successfully!"
+          echo "Frontend URL: http://${{ needs.deploy-backend.outputs.bucket-name }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com"
+
+      - name: Deployment Summary
+        run: |
+          echo "🎉 Deployment Complete!"
+          echo "================================"
+          echo "API Endpoint: ${{ needs.deploy-backend.outputs.api-url }}"
+          echo "Frontend URL: http://${{ needs.deploy-backend.outputs.bucket-name }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com"
+          echo "================================"

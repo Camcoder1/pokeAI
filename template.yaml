@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Pokémon TCG Market Analyst - Serverless Application
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+    Environment:
+      Variables:
+        DYNAMODB_TABLE: !Ref PokemonAnalyticsTable
+        POKEMON_TCG_API_KEY: !Ref PokemonTCGApiKey
+        CACHE_TTL: '3600'
+
+Parameters:
+  PokemonTCGApiKey:
+    Type: String
+    Description: API Key for Pokemon TCG API (pokemontcg.io)
+    Default: 'demo-key'
+    NoEcho: true
+
+Resources:
+  # DynamoDB Table for Analytics and Caching
+  PokemonAnalyticsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: pokemon-tcg-analytics
+      BillingMode: PAY_PER_REQUEST  # On-demand pricing - cost effective
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: timestamp-index
+          KeySchema:
+            - AttributeName: pk
+              KeyType: HASH
+            - AttributeName: timestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false  # Disable to save costs
+      Tags:
+        - Key: Project
+          Value: PokemonTCGAnalyst
+
+  # Lambda Function - Pokemon TCG Analyzer
+  PokemonAnalyzerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: app.lambda_handler
+      Description: Analyzes Pokemon TCG sealed products for open/hold/resell decisions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PokemonAnalyticsTable
+      Events:
+        AnalyzeProduct:
+          Type: Api
+          Properties:
+            Path: /analyze
+            Method: post
+            RestApiId: !Ref PokemonApi
+        GetAnalysis:
+          Type: Api
+          Properties:
+            Path: /analyze/{productId}
+            Method: get
+            RestApiId: !Ref PokemonApi
+        ListSets:
+          Type: Api
+          Properties:
+            Path: /sets
+            Method: get
+            RestApiId: !Ref PokemonApi
+        GetTrending:
+          Type: Api
+          Properties:
+            Path: /trending
+            Method: get
+            RestApiId: !Ref PokemonApi
+
+  # API Gateway
+  PokemonApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      TracingEnabled: false  # Disable X-Ray to save costs
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingBurstLimit: 100
+          ThrottlingRateLimit: 50
+
+  # S3 Bucket for Frontend Hosting
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'pokemon-tcg-analyst-${AWS::AccountId}'
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedMethods:
+              - GET
+              - HEAD
+            AllowedHeaders:
+              - '*'
+
+  # S3 Bucket Policy for Public Read
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${FrontendBucket.Arn}/*'
+
+  # CloudFront Distribution (optional but recommended for performance)
+  # Commented out to minimize costs - enable if needed
+  # CloudFrontDistribution:
+  #   Type: AWS::CloudFront::Distribution
+  #   Properties:
+  #     DistributionConfig:
+  #       Enabled: true
+  #       DefaultRootObject: index.html
+  #       Origins:
+  #         - Id: S3Origin
+  #           DomainName: !GetAtt FrontendBucket.DomainName
+  #           S3OriginConfig: {}
+  #       DefaultCacheBehavior:
+  #         TargetOriginId: S3Origin
+  #         ViewerProtocolPolicy: redirect-to-https
+  #         AllowedMethods: [GET, HEAD, OPTIONS]
+  #         CachedMethods: [GET, HEAD]
+  #         ForwardedValues:
+  #           QueryString: false
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${PokemonApi}.execute-api.${AWS::Region}.amazonaws.com/prod/'
+    Export:
+      Name: PokemonTCGApiEndpoint
+
+  FrontendURL:
+    Description: Frontend website URL
+    Value: !GetAtt FrontendBucket.WebsiteURL
+    Export:
+      Name: PokemonTCGFrontendURL
+
+  DynamoDBTable:
+    Description: DynamoDB table name
+    Value: !Ref PokemonAnalyticsTable
+    Export:
+      Name: PokemonTCGTableName

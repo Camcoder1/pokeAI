@@ -1,0 +1,271 @@
+.analysis-results {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.product-info {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.product-info h3 {
+  color: #333;
+  font-size: 1.6rem;
+  margin-bottom: 5px;
+}
+
+.set-name {
+  color: #667eea;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.recommendation-badge {
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.recommendation-open {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+}
+
+.recommendation-hold {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+.recommendation-resell {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.recommendation-text {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.confidence-score {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.pricing-table {
+  margin-bottom: 30px;
+}
+
+.pricing-table h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.pricing-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pricing-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pricing-table td:first-child {
+  color: #666;
+  font-weight: 600;
+}
+
+.pricing-table .price {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.pricing-table .highlight {
+  color: #667eea;
+  font-size: 1.3rem;
+}
+
+.roi-section {
+  margin-bottom: 30px;
+}
+
+.roi-section h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.roi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.roi-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.roi-card:hover {
+  transform: translateY(-5px);
+}
+
+.roi-label {
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.roi-amount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.roi-percent {
+  color: #999;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.top-cards-section {
+  margin-bottom: 30px;
+}
+
+.top-cards-section h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.card-item {
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-details {
+  padding: 10px;
+}
+
+.card-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-rarity {
+  font-size: 0.75rem;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.card-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4caf50;
+  margin-bottom: 3px;
+}
+
+.card-ev {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.assumptions-section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.assumptions-section h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.assumptions-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.assumptions-section li {
+  padding: 8px 0;
+  color: #666;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.assumptions-section li:last-child {
+  border-bottom: none;
+}
+
+.api-sources {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.api-sources strong {
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.api-sources ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.api-sources li {
+  border: none;
+  padding: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .roi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .recommendation-text {
+    font-size: 1.1rem;
+  }
+
+  .roi-amount {
+    font-size: 1.4rem;
+  }
+}
