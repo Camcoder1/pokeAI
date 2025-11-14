@@ -1,0 +1,283 @@
+.quick-shopping-list {
+  margin-bottom: 30px;
+}
+
+.shopping-card {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 3px solid #667eea;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.shopping-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #667eea;
+}
+
+.shopping-header h2 {
+  color: #667eea;
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.shopping-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.shopping-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stat-bubble {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.btn-clear {
+  padding: 10px 20px;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+
+.shopping-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.shopping-list-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.shopping-list-item:hover {
+  border-color: #667eea;
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.shopping-list-item.checked {
+  background: #f0f7ff;
+  border-color: #4caf50;
+  opacity: 0.7;
+}
+
+.shopping-list-item.checked .item-name {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.item-checkbox input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #4caf50;
+}
+
+.item-rank {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #667eea;
+  min-width: 35px;
+  text-align: center;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.item-set {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.item-number {
+  font-family: monospace;
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.item-rarity {
+  font-style: italic;
+}
+
+.item-separator {
+  color: #ccc;
+}
+
+.item-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #4caf50;
+  min-width: 90px;
+  text-align: right;
+}
+
+.shopping-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.total-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.total-label {
+  font-weight: 600;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.total-amount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.shopping-tip {
+  color: #ff9800;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Print styles */
+@media print {
+  .shopping-stats {
+    display: none;
+  }
+
+  .item-checkbox {
+    display: block !important;
+  }
+
+  .shopping-list-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .btn-clear {
+    display: none;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .shopping-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .shopping-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stat-bubble {
+    min-width: 70px;
+    padding: 12px 15px;
+  }
+
+  .stat-number {
+    font-size: 1.6rem;
+  }
+
+  .item-rank {
+    min-width: 30px;
+    font-size: 1rem;
+  }
+
+  .item-name {
+    font-size: 0.95rem;
+  }
+
+  .item-price {
+    font-size: 1.2rem;
+    min-width: 70px;
+  }
+
+  .shopping-footer {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .shopping-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .item-meta {
+    flex-wrap: wrap;
+  }
+
+  .item-separator {
+    display: none;
+  }
+}

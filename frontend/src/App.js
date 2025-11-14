@@ -4,9 +4,10 @@ import './App.css';
 import AnalysisResults from './components/AnalysisResults';
 import TrendingProducts from './components/TrendingProducts';
 import CardShopList from './components/CardShopList';
+import QuickShoppingList from './components/QuickShoppingList';
 
 // API endpoint - will be replaced with actual API Gateway URL after deployment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://blvkupimh3.execute-api.us-east-1.amazonaws.com/prod';
 
 function App() {
   const [sets, setSets] = useState([]);
@@ -85,6 +86,9 @@ function App() {
 
       <div className="container">
         <div className="main-content">
+          {/* Quick Shopping List - Always Visible */}
+          <QuickShoppingList />
+
           {/* Analysis Form */}
           <div className="card form-card">
             <h2>Analyze Sealed Product</h2>
