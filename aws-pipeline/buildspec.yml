@@ -1,0 +1,52 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+      nodejs: 18
+    commands:
+      - echo "Installing AWS SAM CLI..."
+      - pip install aws-sam-cli
+      - sam --version
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase - installing dependencies..."
+      - cd backend
+      - pip install -r requirements.txt -t .
+      - cd ..
+
+  build:
+    commands:
+      - echo "Build phase - packaging SAM application..."
+      - sam build
+      - echo "Deploying SAM application..."
+      - sam deploy --stack-name pokemon-tcg-analyst --capabilities CAPABILITY_IAM --region $AWS_REGION --resolve-s3 --parameter-overrides PokemonTCGApiKey=$POKEMON_TCG_API_KEY --no-confirm-changeset --no-fail-on-empty-changeset
+
+      # Get outputs
+      - export API_URL=$(aws cloudformation describe-stacks --stack-name pokemon-tcg-analyst --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' --output text)
+      - export BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name pokemon-tcg-analyst --query 'Stacks[0].Outputs[?OutputKey==`FrontendURL`].OutputValue' --output text | sed 's/http:\/\///' | sed 's/.s3-website.*//')
+      - echo "API URL':' $API_URL"
+      - echo "Bucket':' $BUCKET_NAME"
+
+      # Build frontend
+      - echo "Building frontend..."
+      - cd frontend
+      - npm install
+      - REACT_APP_API_URL=$API_URL npm run build
+      - cd ..
+
+      # Deploy frontend to S3
+      - echo "Deploying frontend to S3..."
+      - aws s3 sync frontend/build/ s3://$BUCKET_NAME/ --delete
+
+  post_build:
+    commands:
+      - echo "Deployment complete!"
+      - echo "Frontend URL':' http://$BUCKET_NAME.s3-website-$AWS_REGION.amazonaws.com"
+      - echo "API URL':' $API_URL"
+
+artifacts:
+  files:
+    - '**/*'
