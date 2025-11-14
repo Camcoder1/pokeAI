@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 import AnalysisResults from './components/AnalysisResults';
 import TrendingProducts from './components/TrendingProducts';
-import SetSelector from './components/SetSelector';
+import CardShopList from './components/CardShopList';
 
 // API endpoint - will be replaced with actual API Gateway URL after deployment
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod';
@@ -154,7 +154,17 @@ function App() {
 
           {/* Analysis Results */}
           {analysis && (
-            <AnalysisResults analysis={analysis} />
+            <>
+              <AnalysisResults analysis={analysis} />
+
+              {/* Card Shop Reference List */}
+              {analysis.ev_breakdown && analysis.ev_breakdown.top_cards && (
+                <CardShopList
+                  cards={analysis.ev_breakdown.top_cards}
+                  setName={analysis.set_name}
+                />
+              )}
+            </>
           )}
 
           {/* Trending Products */}
