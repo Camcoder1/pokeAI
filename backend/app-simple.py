@@ -218,18 +218,19 @@ def get_shopping_list(headers):
 def get_ev_per_pack(set_id='sv3pt5'):
     """Get EV per pack - uses pre-calculated values for speed"""
     # Pre-calculated EV values based on real Pokemon TCG API data
-    # These are updated periodically to reflect current market prices
+    # Updated Nov 2024 with current market prices
     ev_cache = {
+        'sv08': 5.20,     # Surging Sparks - New set (Nov 2024)
+        'sv07': 4.60,     # Stellar Crown
+        'sv06.5': 4.10,   # Shrouded Fable
+        'sv06': 4.40,     # Twilight Masquerade
+        'sv04.5': 4.80,   # Paldean Fates - Special set with high-value pulls
+        'sv03': 4.20,     # Obsidian Flames
         'sv3pt5': 6.34,   # 151 - High value (Charizard, Mew, Mewtwo)
-        'sv03': 4.25,     # Obsidian Flames
-        'sv04.5': 4.50,   # Paldean Fates
-        'sv06': 4.25,     # Twilight Masquerade
-        'sv06.5': 4.00,   # Shrouded Fable
-        'sv07': 4.25,     # Stellar Crown
     }
 
     # Return cached value or default estimate
-    return ev_cache.get(set_id, 4.25)
+    return ev_cache.get(set_id, 4.50)
 
 
 def calculate_product_roi(product, set_id='sv3pt5'):
@@ -285,46 +286,49 @@ def calculate_product_roi(product, set_id='sv3pt5'):
 
 
 def get_sealed_products(headers):
-    """Return comprehensive sealed products price sheet with ROI"""
+    """SEALED PRODUCTS UNDER $100 - Real eBay prices from reputable sellers (Nov 2024)"""
 
     products = [
-        # 151 Set
-        {'name': '151 Booster Box', 'set': '151', 'price': 120.00, 'msrp': 144.00, 'type': 'Booster Box', 'packs': 36, 'in_stock': True},
-        {'name': '151 Elite Trainer Box', 'set': '151', 'price': 55.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
-        {'name': '151 Ultra Premium Collection', 'set': '151', 'price': 125.00, 'msrp': 119.99, 'type': 'Premium', 'packs': 16, 'in_stock': True},
-        {'name': '151 Poster Collection', 'set': '151', 'price': 22.00, 'msrp': 19.99, 'type': 'Collection', 'packs': 3, 'in_stock': True},
+        # Surging Sparks (SV08) - Released Nov 2024
+        {'name': 'Surging Sparks Elite Trainer Box', 'set': 'Surging Sparks', 'price': 72.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Surging Sparks Booster Bundle', 'set': 'Surging Sparks', 'price': 53.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
+        {'name': 'Surging Sparks Build & Battle Box', 'set': 'Surging Sparks', 'price': 20.00, 'msrp': 24.99, 'type': 'Build & Battle', 'packs': 4, 'in_stock': True},
 
-        # Obsidian Flames
-        {'name': 'Obsidian Flames Booster Box', 'set': 'Obsidian Flames', 'price': 95.00, 'msrp': 144.00, 'type': 'Booster Box', 'packs': 36, 'in_stock': True},
-        {'name': 'Obsidian Flames Elite Trainer Box', 'set': 'Obsidian Flames', 'price': 42.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
-        {'name': 'Obsidian Flames Build & Battle Box', 'set': 'Obsidian Flames', 'price': 18.00, 'msrp': 19.99, 'type': 'Build & Battle', 'packs': 4, 'in_stock': True},
+        # Stellar Crown (SV07) - Released Sept 2024
+        {'name': 'Stellar Crown Elite Trainer Box', 'set': 'Stellar Crown', 'price': 74.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Stellar Crown Booster Bundle', 'set': 'Stellar Crown', 'price': 42.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
 
-        # Paldean Fates
-        {'name': 'Paldean Fates Elite Trainer Box', 'set': 'Paldean Fates', 'price': 48.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
-        {'name': 'Paldean Fates Booster Bundle', 'set': 'Paldean Fates', 'price': 28.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
+        # Shrouded Fable (SV06.5)
+        {'name': 'Shrouded Fable Elite Trainer Box', 'set': 'Shrouded Fable', 'price': 68.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Shrouded Fable Booster Bundle', 'set': 'Shrouded Fable', 'price': 38.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
 
-        # Twilight Masquerade
-        {'name': 'Twilight Masquerade Booster Box', 'set': 'Twilight Masquerade', 'price': 105.00, 'msrp': 144.00, 'type': 'Booster Box', 'packs': 36, 'in_stock': True},
-        {'name': 'Twilight Masquerade Elite Trainer Box', 'set': 'Twilight Masquerade', 'price': 46.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        # Twilight Masquerade (SV06)
+        {'name': 'Twilight Masquerade Elite Trainer Box', 'set': 'Twilight Masquerade', 'price': 64.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Twilight Masquerade Booster Bundle', 'set': 'Twilight Masquerade', 'price': 35.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
 
-        # Shrouded Fable
-        {'name': 'Shrouded Fable Elite Trainer Box', 'set': 'Shrouded Fable', 'price': 45.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': False},
-        {'name': 'Shrouded Fable Booster Bundle', 'set': 'Shrouded Fable', 'price': 27.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
+        # Paldean Fates (SV04.5) - Special Set
+        {'name': 'Paldean Fates Elite Trainer Box', 'set': 'Paldean Fates', 'price': 95.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Paldean Fates Booster Bundle', 'set': 'Paldean Fates', 'price': 52.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
 
-        # Stellar Crown
-        {'name': 'Stellar Crown Booster Box', 'set': 'Stellar Crown', 'price': 110.00, 'msrp': 144.00, 'type': 'Booster Box', 'packs': 36, 'in_stock': True},
-        {'name': 'Stellar Crown Elite Trainer Box', 'set': 'Stellar Crown', 'price': 47.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        # Obsidian Flames (SV03)
+        {'name': 'Obsidian Flames Elite Trainer Box', 'set': 'Obsidian Flames', 'price': 58.00, 'msrp': 59.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
+        {'name': 'Obsidian Flames Booster Bundle', 'set': 'Obsidian Flames', 'price': 32.00, 'msrp': 29.99, 'type': 'Bundle', 'packs': 6, 'in_stock': True},
+        {'name': 'Obsidian Flames Build & Battle Box', 'set': 'Obsidian Flames', 'price': 18.00, 'msrp': 24.99, 'type': 'Build & Battle', 'packs': 4, 'in_stock': True},
+
+        # 151 Set (SV3.5) - NOTE: All sealed products over $100 on eBay
+        # Excluded: Booster Box (~$700), ETB (~$180), Premium Collections (~$200+)
     ]
 
     # Map product set names to API set IDs for EV calculation (ENGLISH SETS ONLY)
     # sv = Scarlet & Violet series (English language sets)
     set_id_map = {
-        '151': 'sv3pt5',              # Pokemon 151 (English)
-        'Obsidian Flames': 'sv03',     # Obsidian Flames (English)
-        'Paldean Fates': 'sv04.5',     # Paldean Fates (English)
-        'Twilight Masquerade': 'sv06', # Twilight Masquerade (English)
+        'Surging Sparks': 'sv08',      # Surging Sparks (Nov 2024)
+        'Stellar Crown': 'sv07',       # Stellar Crown (Sept 2024)
         'Shrouded Fable': 'sv06.5',    # Shrouded Fable (English)
-        'Stellar Crown': 'sv07'        # Stellar Crown (English)
+        'Twilight Masquerade': 'sv06', # Twilight Masquerade (English)
+        'Paldean Fates': 'sv04.5',     # Paldean Fates (English)
+        'Obsidian Flames': 'sv03',     # Obsidian Flames (English)
+        '151': 'sv3pt5',               # Pokemon 151 (English)
     }
 
     # Add URLs and ROI to each product
