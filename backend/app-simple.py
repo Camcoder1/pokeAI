@@ -316,14 +316,15 @@ def get_sealed_products(headers):
         {'name': 'Stellar Crown Elite Trainer Box', 'set': 'Stellar Crown', 'price': 47.00, 'msrp': 49.99, 'type': 'ETB', 'packs': 9, 'in_stock': True},
     ]
 
-    # Map product set names to API set IDs for EV calculation
+    # Map product set names to API set IDs for EV calculation (ENGLISH SETS ONLY)
+    # sv = Scarlet & Violet series (English language sets)
     set_id_map = {
-        '151': 'sv3pt5',
-        'Obsidian Flames': 'sv03',
-        'Paldean Fates': 'sv04.5',
-        'Twilight Masquerade': 'sv06',
-        'Shrouded Fable': 'sv06.5',
-        'Stellar Crown': 'sv07'
+        '151': 'sv3pt5',              # Pokemon 151 (English)
+        'Obsidian Flames': 'sv03',     # Obsidian Flames (English)
+        'Paldean Fates': 'sv04.5',     # Paldean Fates (English)
+        'Twilight Masquerade': 'sv06', # Twilight Masquerade (English)
+        'Shrouded Fable': 'sv06.5',    # Shrouded Fable (English)
+        'Stellar Crown': 'sv07'        # Stellar Crown (English)
     }
 
     # Add URLs and ROI to each product
@@ -361,7 +362,8 @@ def get_all_cards(event, headers):
     set_filter = query_params.get('set', '151')  # Default to 151
     search_query = query_params.get('search', '').lower()
 
-    # Map set name to set ID
+    # Map set name to set ID (ENGLISH SETS ONLY)
+    # All set IDs are for English-language Pokemon TCG sets
     set_id_map = {
         '151': 'sv3pt5',
         'Obsidian Flames': 'sv03',
@@ -370,7 +372,7 @@ def get_all_cards(event, headers):
         'Shrouded Fable': 'sv06.5'
     }
 
-    set_id = set_id_map.get(set_filter, 'sv3pt5')
+    set_id = set_id_map.get(set_filter, 'sv3pt5')  # Default to Pokemon 151 (English)
 
     # Fetch REAL cards from Pokemon TCG API
     print(f"Fetching cards from Pokemon TCG API for set: {set_id}")

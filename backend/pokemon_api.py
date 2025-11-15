@@ -1,6 +1,11 @@
 """
-Pokemon TCG API Integration - Real pricing data
+Pokemon TCG API Integration - Real pricing data (ENGLISH CARDS ONLY)
 API Documentation: https://docs.pokemontcg.io/
+
+English-Only Filters:
+1. Set IDs (sv3pt5, sv03, etc.) are English-language sets
+2. TCGPlayer pricing = US market = English cards only
+3. All cards without TCGPlayer data are filtered out
 """
 
 import json
@@ -41,10 +46,11 @@ def make_request(url):
 
 def fetch_set_cards(set_id='sv3pt5', page=1, page_size=250):
     """
-    Fetch all cards from a specific set with real pricing
+    Fetch all cards from a specific set with real pricing (ENGLISH ONLY)
     set_id: sv3pt5 for Pokemon 151
     """
     try:
+        # Query for English cards only from the specific set
         params = urllib.parse.urlencode({
             'q': f'set.id:{set_id}',
             'page': page,
@@ -62,12 +68,17 @@ def fetch_set_cards(set_id='sv3pt5', page=1, page_size=250):
         # Extract relevant card info with real pricing
         processed_cards = []
         for card in cards:
-            # Only include English cards
+            # Verify card is from the correct set
             if card.get('set', {}).get('id') != set_id:
                 continue
 
-            # Get TCGPlayer pricing
+            # Get TCGPlayer pricing (US market = English cards only)
+            # Only cards with TCGPlayer data are English US market cards
             tcg_prices = card.get('tcgplayer', {}).get('prices', {})
+
+            # Skip cards without TCGPlayer pricing (ensures English only)
+            if not tcg_prices:
+                continue
 
             # Determine price based on rarity/type
             price = 0.0
